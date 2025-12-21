@@ -27,4 +27,7 @@ public class StoreController {
     }
 
     @GetMapping
-    public List<Store>
+    public List<Store> getAllStores() {
+        return storeService.getAllStores();
+    }
+}
