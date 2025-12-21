@@ -1,8 +1,20 @@
 package com.example.demo.servlet;
 
-public class SimpleStatusServlet {
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-    public String getStatus() {
-        return "Multi-location Inventory Balancer is running";
+import java.io.IOException;
+
+@WebServlet("/simple-status")
+public class SimpleStatusServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        response.setContentType("text/plain");
+        response.getWriter().write("OK");
     }
 }
