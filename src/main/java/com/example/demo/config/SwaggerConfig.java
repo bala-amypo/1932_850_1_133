@@ -21,20 +21,14 @@ public class SwaggerConfig {
                 .scheme("bearer")
                 .bearerFormat("JWT");
 
-        Server localServer = new Server();
-        localServer.setUrl("http://localhost:8080");
-        localServer.setDescription("Local Server");
-
-        Server prodServer = new Server();
-        prodServer.setUrl("https://9233.408procr.amypo.ai");
-        prodServer.setDescription("Production Server");
+        Server server = new Server();
+        server.setUrl("http://localhost:9087");
+        server.setDescription("Local Server");
 
         return new OpenAPI()
-                .addServersItem(localServer)
-                .addServersItem(prodServer)
+                .addServersItem(server)
                 .info(new Info()
                         .title("Multi-Location Inventory Balancer API")
-                        .description("Spring Boot REST API with JWT Security")
                         .version("1.0"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()
