@@ -21,8 +21,8 @@ public class SwaggerConfig {
                 .bearerFormat("JWT");
 
         Server server = new Server();
-        server.setUrl("https://9233.408procr.amypo.ai/");
-        server.setDescription("Production Server");
+        server.setUrl("http://localhost:9087");
+        server.setDescription("Local Server");
 
         return new OpenAPI()
                 .addServersItem(server)
