@@ -1,7 +1,6 @@
 package com.example.demo.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -22,16 +21,17 @@ public class SwaggerConfig {
                 .bearerFormat("JWT");
 
         Server server = new Server();
-        server.setUrl("http://localhost:9087");
-        server.setDescription("Local Server");
+        server.setUrl("https://9233.408procr.amypo.ai/");
+        server.setDescription("Production Server");
 
         return new OpenAPI()
                 .addServersItem(server)
                 .info(new Info()
                         .title("Multi-Location Inventory Balancer API")
+                        .description("Spring Boot REST API with JWT Security")
                         .version("1.0"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(new Components()
+                .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes("bearerAuth", securityScheme));
     }
 }
