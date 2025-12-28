@@ -11,40 +11,30 @@ import java.util.List;
 @Service
 public class InventoryLevelServiceImpl implements InventoryLevelService {
 
-    private final InventoryLevelRepository inventoryRepo;
+    private final InventoryLevelRepository repo;
 
-    public InventoryLevelServiceImpl(InventoryLevelRepository inventoryRepo) {
-        this.inventoryRepo = inventoryRepo;
+    public InventoryLevelServiceImpl(InventoryLevelRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
     public InventoryLevel createOrUpdateInventory(InventoryLevel inv) {
-
         if (inv.getQuantity() < 0) {
             throw new BadRequestException("Quantity must be >= 0");
         }
 
-        InventoryLevel existing =
-                inventoryRepo.findByStoreAndProduct(
-                        inv.getStore(),
-                        inv.getProduct()
-                );
-
-        if (existing != null) {
-            existing.setQuantity(inv.getQuantity());
-            return inventoryRepo.save(existing);
-        }
-
-        return inventoryRepo.save(inv);
+        return repo.findByStoreAndProduct(inv.getStore(), inv.getProduct())
+                .map(existing -> {
+                    existing.setQuantity(inv.getQuantity());
+                    return repo.save(existing);
+                })
+                .orElseGet(() -> repo.save(inv));
     }
 
-    @Override
     public List<InventoryLevel> getInventoryForStore(Long storeId) {
-        return inventoryRepo.findByStore_Id(storeId);
+        return repo.findByStore_Id(storeId);
     }
 
-    @Override
     public List<InventoryLevel> getInventoryForProduct(Long productId) {
-        return inventoryRepo.findByProduct_Id(productId);
+        return repo.findByProduct_Id(productId);
     }
 }

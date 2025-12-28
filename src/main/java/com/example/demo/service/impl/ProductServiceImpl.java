@@ -12,39 +12,30 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepo;
+    private final ProductRepository repo;
 
-    public ProductServiceImpl(ProductRepository productRepo) {
-        this.productRepo = productRepo;
+    public ProductServiceImpl(ProductRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
     public Product createProduct(Product product) {
-
-        if (productRepo.findBySku(product.getSku()) != null) {
-            throw new BadRequestException("SKU already exists");
-        }
-
-        product.setActive(true);
-        return productRepo.save(product);
+        repo.findBySku(product.getSku())
+                .ifPresent(p -> { throw new BadRequestException("SKU already exists"); });
+        return repo.save(product);
     }
 
-    @Override
     public Product getProductById(Long id) {
-        return productRepo.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Product not found"));
+        return repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
 
-    @Override
     public List<Product> getAllProducts() {
-        return productRepo.findAll();
+        return repo.findAll();
     }
 
-    @Override
     public void deactivateProduct(Long id) {
-        Product product = getProductById(id);
-        product.setActive(false);
-        productRepo.save(product);
+        Product p = getProductById(id);
+        p.setActive(false);
+        repo.save(p);
     }
 }

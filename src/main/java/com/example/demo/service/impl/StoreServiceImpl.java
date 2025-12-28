@@ -12,50 +12,39 @@ import java.util.List;
 @Service
 public class StoreServiceImpl implements StoreService {
 
-    private final StoreRepository storeRepo;
+    private final StoreRepository repo;
 
-    public StoreServiceImpl(StoreRepository storeRepo) {
-        this.storeRepo = storeRepo;
+    public StoreServiceImpl(StoreRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
     public Store createStore(Store store) {
-
-        if (storeRepo.findByStoreName(store.getStoreName()) != null) {
-            throw new BadRequestException("Store name already exists");
-        }
-
-        store.setActive(true);
-        return storeRepo.save(store);
+        repo.findByStoreName(store.getStoreName())
+                .ifPresent(s -> { throw new BadRequestException("Store name already exists"); });
+        return repo.save(store);
     }
 
-    @Override
     public Store getStoreById(Long id) {
-        return storeRepo.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Store not found"));
+        return repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
     }
 
-    @Override
     public List<Store> getAllStores() {
-        return storeRepo.findAll();
+        return repo.findAll();
     }
 
-    @Override
     public Store updateStore(Long id, Store update) {
-
-        Store store = getStoreById(id);
-        store.setStoreName(update.getStoreName());
-        store.setRegion(update.getRegion());
-        store.setAddress(update.getAddress());
-
-        return storeRepo.save(store);
+        Store existing = getStoreById(id);
+        existing.setStoreName(update.getStoreName());
+        existing.setAddress(update.getAddress());
+        existing.setRegion(update.getRegion());
+        existing.setActive(update.isActive());
+        return repo.save(existing);
     }
 
-    @Override
     public void deactivateStore(Long id) {
         Store store = getStoreById(id);
         store.setActive(false);
-        storeRepo.save(store);
+        repo.save(store);
     }
 }
