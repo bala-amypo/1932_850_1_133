@@ -1,24 +1,41 @@
 package com.example.demo.security;
 
-import com.example.demo.repository.UserAccountRepository;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.stereotype.Service;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
-@Service
+import java.io.IOException;
+
+@Component
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class JwtAuthenticationFilter extends GenericFilter {
 
-    private final UserAccountRepository repo;
+    private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
-        var user = repo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
-        return User.withUsername(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRole().replace("ROLE_", ""))
-                .build();
+        HttpServletRequest req = (HttpServletRequest) request;
+        String header = req.getHeader("Authorization");
+
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
+
+            if (jwtUtil.validateToken(token)) {
+                String username = jwtUtil.getUsername(token);
+                UserDetails user = userDetailsService.loadUserByUsername(username);
+
+                var auth = new UsernamePasswordAuthenticationToken(
+                        user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        }
+        chain.doFilter(request, response);
     }
 }
