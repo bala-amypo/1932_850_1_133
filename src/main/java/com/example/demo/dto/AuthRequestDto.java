@@ -1,11 +1,17 @@
 package com.example.demo.dto;
-
+import lombok.*;
+@Builder
 public class AuthRequestDto {
 
     private String email;
     private String password;
 
     public AuthRequestDto() {
+    }
+
+    public AuthRequestDto(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
     public String getEmail() {

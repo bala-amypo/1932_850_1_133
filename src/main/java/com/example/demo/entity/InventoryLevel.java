@@ -1,7 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "inventory_levels",
@@ -20,53 +20,24 @@ public class InventoryLevel {
 
     private Integer quantity;
 
-    private Instant lastUpdated;
+    private LocalDateTime lastUpdated;
 
-    @PrePersist
+   @PrePersist
     public void prePersist() {
-        lastUpdated = Instant.now();
+        this.lastUpdated = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        lastUpdated = Instant.now();
+        this.lastUpdated = LocalDateTime.now();
     }
-
-    public InventoryLevel() {}
-
-    public Long getId() {
-        return id;
-    }
-
-    public Store getStore() {
-        return store;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public Instant getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setStore(Store store) {
-        this.store = store;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
+    // getters & setters
+    public Long getId() { return id; }
+    public Store getStore() { return store; }
+    public void setStore(Store store) { this.store = store; }
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public LocalDateTime getLastUpdated() { return lastUpdated; }
 }
